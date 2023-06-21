@@ -86,9 +86,8 @@ import UIKit
     public func initializeUI() {
         layer.masksToBounds = true
         layoutIfNeeded()
-        
-        initializeOTPFields()
         fieldSize = (bounds.size.width - separatorSpace * CGFloat(fieldsCount - 1)) / CGFloat(fieldsCount)
+        initializeOTPFields()
         layoutIfNeeded()
         
         // Forcefully try to make first otp field as first responder
