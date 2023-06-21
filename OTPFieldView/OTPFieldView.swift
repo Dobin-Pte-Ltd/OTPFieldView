@@ -259,26 +259,36 @@ extension OTPFieldView: UITextFieldDelegate {
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let replacedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
         
+        if otpInputType == .numeric && replacedText.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) != nil {
+            return false
+        }
+    
         // Check since only alphabet keyboard is not available in iOS
         if !replacedText.isEmpty && otpInputType == .alphabet && replacedText.rangeOfCharacter(from: .letters) == nil {
             return false
         }
         
+        if string.count > 2 {
+            for index in stride(from: 0, to: min(string.count, fieldsCount), by: 1) {
+                let text = String(string[index])
+                secureEntryData[index] = text
+                var otpField = viewWithTag(index + 1) as? OTPTextField
+                if otpField == nil {
+                    otpField = getOTPField(forIndex: index)
+                }
+                fill(otpField, with: text)
+            }
+            textField.resignFirstResponder()
+            calculateEnteredOTPSTring(isDeleted: false)
+            return false
+        }
+        
         if replacedText.count >= 1 {
+            guard string.count == 1 else { return false }
             // If field has a text already, then replace the text and move to next field if present
             secureEntryData[textField.tag - 1] = string
             
-            if hideEnteredText {
-                textField.text = " "
-            }
-            else {
-                if secureEntry {
-                    textField.text = "•"
-                }
-                else {
-                    textField.text = string
-                }
-            }
+            fill(textField, with: string)
             
             if displayType == .diamond || displayType == .underlinedBottom {
                 (textField as! OTPTextField).shapeLayer.fillColor = filledBackgroundColor.cgColor
@@ -339,5 +349,24 @@ extension OTPFieldView: UITextFieldDelegate {
         
         // Get the entered string
         calculateEnteredOTPSTring(isDeleted: true)
+    }
+    
+    private func fill(_ textField: UITextField?, with text: String) {
+        if hideEnteredText {
+            textField?.text = " "
+        } else {
+            if secureEntry {
+                textField?.text = "•"
+            } else {
+                textField?.text = text
+            }
+        }
+    }
+}
+
+extension StringProtocol {
+
+    subscript(_ offset: Int) -> Element {
+        self[index(startIndex, offsetBy: offset)]
     }
 }
