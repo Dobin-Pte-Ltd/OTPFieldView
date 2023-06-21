@@ -88,7 +88,7 @@ import UIKit
         layoutIfNeeded()
         
         initializeOTPFields()
-        
+        fieldSize = (bounds.size.width - separatorSpace * CGFloat(fieldsCount - 1)) / CGFloat(fieldsCount)
         layoutIfNeeded()
         
         // Forcefully try to make first otp field as first responder
@@ -189,7 +189,6 @@ import UIKit
             _ = delegate?.hasEnteredAllOTP(hasEnteredAll: false)
             
             // Set the default enteres state for otp entry
-            fieldSize = (bounds.size.width - separatorSpace * CGFloat(fieldsCount - 1)) / CGFloat(fieldsCount)
             for index in stride(from: 0, to: fieldsCount, by: 1) {
                 var otpField = viewWithTag(index + 1) as? OTPTextField
                 
