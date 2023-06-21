@@ -87,6 +87,7 @@ import UIKit
         layer.masksToBounds = true
         layoutIfNeeded()
         fieldSize = (bounds.size.width - separatorSpace * CGFloat(fieldsCount - 1)) / CGFloat(fieldsCount)
+        fieldSize = min(fieldSize, bounds.size.height)
         initializeOTPFields()
         layoutIfNeeded()
         
